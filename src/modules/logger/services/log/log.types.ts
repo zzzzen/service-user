@@ -1,9 +1,10 @@
 export type TLogParams = {
   service: string;
-  message: string;
 };
 
-export type TLog = TLogParams & {
-  context: 'INFO' | 'ERROR' | 'WARNING' | 'DEBUG';
+export type TLog = {
+  message: string;
+  service: string;
+  context: 'info' | 'error' | 'warning';
   type: 'log' | 'error' | 'warn';
 };

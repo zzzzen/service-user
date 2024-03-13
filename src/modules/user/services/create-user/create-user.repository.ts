@@ -7,7 +7,7 @@ import { Model } from 'mongoose';
 export class CreateUserRepository {
   constructor(@InjectModel(UserDb.name) private userModel: Model<UserDb>) {}
 
-  async createUser(data: Omit<UserDb, '_id'>) {
+  async createUser(data: UserDb) {
     return this.userModel.create(data);
   }
 }

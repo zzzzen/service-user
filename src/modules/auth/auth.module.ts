@@ -13,7 +13,7 @@ import { SignInService } from './services/sign-in/sign-in.service';
     JwtModule.register({
       global: true,
       secret: 'asdsd',
-      signOptions: { expiresIn: '600s' },
+      signOptions: { expiresIn: '6000s' },
     }),
   ],
   providers: [AuthResolver, AuthJwtStrategy, SignUpService, SignInService],

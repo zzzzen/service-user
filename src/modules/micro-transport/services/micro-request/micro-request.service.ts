@@ -21,8 +21,7 @@ export class MicroRequestService {
       const response = await this[service].send(method, params).toPromise();
       result.data = response.data;
     } catch (err) {
-      this.logger.fail({
-        message: JSON.stringify(err, null, 1),
+      this.logger.error(JSON.stringify(err, null, 1), {
         service: `microtransport - ${service} - ${method}`,
       });
       result.error = err;

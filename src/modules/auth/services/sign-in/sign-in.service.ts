@@ -17,11 +17,9 @@ export class SignInService {
   ) {}
 
   async signIn(data: SignInInput): Promise<SignInOutput> {
-    console.log(data);
     const user = await this.findOneUserService.findOneUser({
       email: data.email,
     });
-    console.log(user);
     if (!user) {
       throw new NotFoundException();
     }

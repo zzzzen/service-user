@@ -1,36 +1,26 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '../../../utils/services/config/config.service';
-import moment from 'moment/moment';
+import { Injectable, LoggerService } from '@nestjs/common';
+import * as moment from 'moment';
 import { TLog, TLogParams } from './log.types';
 
 @Injectable()
-export class LogService {
-  constructor(private readonly configService: ConfigService) {}
-
-  info(params: TLogParams) {
-    this.addLog({ ...params, context: 'INFO', type: 'log' });
+export class LogService implements LoggerService {
+  async log(message: string, params?: TLogParams) {
+    await this.addLog({ ...params, context: 'info', type: 'log', message });
   }
 
-  fail(params: TLogParams) {
-    this.addLog({ ...params, context: 'ERROR', type: 'error' });
+  async error(message: string, params?: TLogParams) {
+    await this.addLog({ ...params, context: 'error', type: 'error', message });
   }
 
-  warning(params: TLogParams) {
-    this.addLog({ ...params, context: 'WARNING', type: 'warn' });
+  async warn(message: string, params?: TLogParams) {
+    await this.addLog({ ...params, context: 'warning', type: 'warn', message });
   }
 
   private async addLog(params: TLog) {
     const { message, context, type, service } = params;
 
-    const text = `[ ${context} ][ ${moment().format('DD.MM.YYYY HH:mm')} ][ ${this.configService.getConfig().SERVICE_NAME} ][ ${service} ][ ${message} ]`;
+    const text = `[ ${context} ][ ${moment().format('DD.MM.YYYY HH:mm')} ][ ${process.env.SERVICE_NAME} ][ ${service || 'UnknownService'} ][ ${message} ]`;
 
-    console[type].apply(this, [text, this.colors.reset]);
+    console[type](text);
   }
-
-  private readonly colors = {
-    reset: '\x1b[0m',
-    log: '\x1b[32m',
-    error: '\x1b[31m',
-    warn: '\x1b[33m',
-  };
 }
