@@ -5,18 +5,17 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { SignInInput } from '../../dto/sign-in.input';
-import { SignInOutput } from '../../dto/sign-in.output';
+import { ISignIn, TSignInInput } from './sign-in.interface';
 import { FindOneUserService } from '../../../user/services/find-one-user/find-one-user.service';
 
 @Injectable()
-export class SignInService {
+export class SignInService implements ISignIn {
   constructor(
     private findOneUserService: FindOneUserService,
     private jwtService: JwtService,
   ) {}
 
-  async signIn(data: SignInInput): Promise<SignInOutput> {
+  async signIn(data: TSignInInput) {
     const user = await this.findOneUserService.findOneUser({
       email: data.email,
     });

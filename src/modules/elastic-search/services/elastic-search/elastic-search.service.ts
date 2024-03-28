@@ -1,13 +1,14 @@
 import * as fs from 'fs';
 import { Injectable } from '@nestjs/common';
 import { Client } from '@elastic/elasticsearch';
-import { LogService } from '../../../logger/services/log/log.service';
+import { IElasticSearch } from './elastic-search.interface';
+import { LoggerService } from '../../../logger/services/loggger/logger.service';
 
 @Injectable()
-export class ElasticSearchService {
+export class ElasticSearchService implements IElasticSearch {
   readonly client: Client;
 
-  constructor(private logger: LogService) {
+  constructor(private logger: LoggerService) {
     this.client = new Client({
       node: 'https://localhost:9200',
       auth: {

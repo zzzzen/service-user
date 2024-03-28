@@ -3,9 +3,10 @@ import { Cron } from '@nestjs/schedule';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ElasticSearchService } from '../../../elastic-search/services/elastic-search/elastic-search.service';
-import { LogService } from '../../../logger/services/log/log.service';
+import { LoggerService } from '../../../logger/services/loggger/logger.service';
 import { OfferDb } from '../../models/offer.db';
 import { IFindOfferRepository, TFindOfferReq } from './find-offer.interface';
+import { SearchTotalHits } from '@elastic/elasticsearch/lib/api/types';
 
 @Injectable()
 export class FindOfferRepository implements IFindOfferRepository {
@@ -14,21 +15,43 @@ export class FindOfferRepository implements IFindOfferRepository {
   constructor(
     @InjectModel(OfferDb.name) private offerModel: Model<OfferDb>,
     private elastic: ElasticSearchService,
-    private logger: LogService,
+    private logger: LoggerService,
   ) {
     this.init();
   }
 
   async find({ name, skip, limit }: TFindOfferReq) {
     const resp = await this.elastic.client.search({
+      index: this.index,
       size: limit,
       from: skip,
       query: {
-        match: { name },
+        bool: {
+          should: [
+            {
+              match: {
+                name,
+              },
+            },
+            {
+              wildcard: {
+                name: `*${name}*`,
+              },
+            },
+            {
+              fuzzy: {
+                name: {
+                  value: name,
+                },
+              },
+            },
+          ],
+          minimum_should_match: 1,
+        },
       },
     });
     return {
-      count: resp.hits.total as number,
+      count: (resp.hits.total as SearchTotalHits).value,
       items: resp.hits.hits.map((hit) => {
         return { _id: hit._id, ...(hit._source as any) };
       }),

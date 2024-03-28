@@ -1,17 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { FindOneCompanyRepository } from './find-one-company.repository';
-import { FilterQuery, ProjectionType, QueryOptions } from 'mongoose';
-import { CompanyDb } from '../../models/company.db';
+import { IFindOneCompany } from './find-one-company.interface';
 
 @Injectable()
-export class FindOneCompanyService {
+export class FindOneCompanyService implements IFindOneCompany {
   constructor(private repository: FindOneCompanyRepository) {}
 
-  async findOneCompany(
-    filter: FilterQuery<CompanyDb>,
-    projection?: ProjectionType<CompanyDb>,
-    options?: QueryOptions,
-  ) {
-    return this.repository.findOneCompany(filter, projection, options);
+  async findOneCompany() {
+    await this.repository.findOneCompany({});
   }
 }

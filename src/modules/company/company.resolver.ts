@@ -9,6 +9,6 @@ export class CompanyResolver {
 
   @Query(() => CompanyGql)
   async company(@Args('data') data: CompanyInput) {
-    return this.findOneCompanyService.findOneCompany(data);
+    return this.findOneCompanyService.findOneCompany();
   }
 }

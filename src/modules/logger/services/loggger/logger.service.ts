@@ -1,18 +1,18 @@
-import { Injectable, LoggerService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as moment from 'moment';
-import { TLog, TLogParams } from './log.types';
+import { ILogger, TLog, TLoggerParams } from './logger.interface';
 
 @Injectable()
-export class LogService implements LoggerService {
-  async log(message: string, params?: TLogParams) {
+export class LoggerService implements ILogger {
+  async log(message: string, params?: TLoggerParams) {
     await this.addLog({ ...params, context: 'info', type: 'log', message });
   }
 
-  async error(message: string, params?: TLogParams) {
+  async error(message: string, params?: TLoggerParams) {
     await this.addLog({ ...params, context: 'error', type: 'error', message });
   }
 
-  async warn(message: string, params?: TLogParams) {
+  async warn(message: string, params?: TLoggerParams) {
     await this.addLog({ ...params, context: 'warning', type: 'warn', message });
   }
 
